@@ -1,36 +1,41 @@
 use libprocon::*;
-use num_bigint::BigInt;
+use std::collections::HashMap;
 
-// Use num_bigint crate. AC (1939ms)
 fn main() {
     input! {
         N: usize,
         A: [usize; N],
     }
 
-    // A1, A2, ..., AN の最小公倍数を求める
-    let mut LCM = BigInt::from(A[0]);
+    let MOD = 1_000_000_007;
+    let mut fac = HashMap::new();
+
+    // A1, A2, ..., AN の最小公倍数を求める（素因数分解の形で）
     for &a in A.iter() {
-        LCM = lcm(BigInt::from(a), LCM);
+        let fac_a = a.factorize();
+        for (k, v) in fac_a.into_iter() {
+            match fac.get(&k) {
+                Some(&n) if n < v => {
+                    fac.insert(k, v);
+                }
+                Some(_) => (),
+                None => {
+                    fac.insert(k, v);
+                }
+            };
+        }
     }
 
-    let MOD = BigInt::from(1_000_000_007);
-    let mut ans = BigInt::from(0);
+    let mut LCM = 1;
+    for (k, v) in fac.into_iter() {
+        LCM = (LCM * k.pow(v as u32)) % MOD;
+    }
+
+    let mut ans = 0;
     for &a in A.iter() {
-        let b = LCM.clone() / a;
-        ans = (ans + b) % MOD.clone();
+        let tmp = (LCM * dbg!(mod_inv(a as u64, MOD as u64)) as usize) % MOD;
+        ans += dbg!(tmp);
     }
-    println!("{}", ans);
-}
 
-pub fn gcd(a: BigInt, b: BigInt) -> BigInt {
-    if b == BigInt::from(0) {
-        a
-    } else {
-        gcd(b.clone(), a % b)
-    }
-}
-
-pub fn lcm(a: BigInt, b: BigInt) -> BigInt {
-    a.clone() / gcd(a, b.clone()) * b
+    println!("{}", ans % MOD);
 }
