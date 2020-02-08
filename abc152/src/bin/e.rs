@@ -1,35 +1,36 @@
 use libprocon::*;
+use num_bigint::BigInt;
 
-// TODO: Wrong Answer (11/18)
+// Use num_bigint crate. AC (1939ms)
 fn main() {
     input! {
         N: usize,
-        A: [u128; N],
+        A: [usize; N],
     }
 
     // A1, A2, ..., AN の最小公倍数を求める
-    let mut LCM = A[0];
+    let mut LCM = BigInt::from(A[0]);
     for &a in A.iter() {
-        LCM = lcm(a, LCM);
+        LCM = lcm(BigInt::from(a), LCM);
     }
 
-    let MOD = 1_000_000_007;
-    let mut ans = 0;
+    let MOD = BigInt::from(1_000_000_007);
+    let mut ans = BigInt::from(0);
     for &a in A.iter() {
-        let b = LCM / a;
-        ans = (ans + b) % MOD;
+        let b = LCM.clone() / a;
+        ans = (ans + b) % MOD.clone();
     }
     println!("{}", ans);
 }
 
-pub fn gcd(a: u128, b: u128) -> u128 {
-    if b == 0 {
+pub fn gcd(a: BigInt, b: BigInt) -> BigInt {
+    if b == BigInt::from(0) {
         a
     } else {
-        gcd(b, a % b)
+        gcd(b.clone(), a % b)
     }
 }
 
-pub fn lcm(a: u128, b: u128) -> u128 {
-    a / gcd(a, b) * b
+pub fn lcm(a: BigInt, b: BigInt) -> BigInt {
+    a.clone() / gcd(a, b.clone()) * b
 }
