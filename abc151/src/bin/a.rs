@@ -1,5 +1,8 @@
 use libprocon::*;
 
 fn main() {
-    unimplemented!();
+    input! {
+        c: char,
+    }
+    println!("{}", (c as u8 + 1) as char);
 }
