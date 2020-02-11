@@ -1,0 +1,11 @@
+[dependencies.libprocon]
+git = 'https://github.com/magurotuna/libprocon.git'
+
+[package]
+authors = ['Yusuke Tanaka <wing0920@gmail.com>']
+edition = '2018'
+name = 'abc146'
+version = '0.1.0'
+[profile.release]
+lto = true
+panic = 'abort'
