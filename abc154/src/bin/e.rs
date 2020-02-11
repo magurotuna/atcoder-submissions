@@ -1,6 +1,6 @@
 use libprocon::*;
 
-// TODO: できてない
+// 解説AC
 fn main() {
     input! {
         N: String,
@@ -12,39 +12,64 @@ fn main() {
         .collect::<Vec<usize>>();
     let d_len = d.len();
 
-    // dp[i+1][smaller][j] := 今調べている桁をi, 未満フラグsmaller, 0以外の数字がj個使われている とし、上からi桁目までで条件を満たす数の総数
-
-    let mut dp = vec![vec![vec![0; d_len + 1]; 2]; d_len + 1];
+    // dp[i][j][k] := d[i]（i桁目）を調べていて、それまでに使った0以外の数字の個数がj個で、それまでに確定している数字がN未満であることが確定しているか否か（確定してたら1）、という値を示すDPテーブル
+    let mut dp = vec![vec![vec![0; 2]; 4]; 110];
     dp[0][0][0] = 1;
 
-    // 求めるもの dp[d_len][0][K]
-
     for i in 0..d_len {
-        for small in 0..2 {
-            for j in 1..=d_len {
-                for x in 0..=(if small == 1 { 9 } else { d[i] }) {
-                    dbg!((i, small, j, x));
-                    if x == 0 {
-                        if 0 == d[i] {
-                            dp[i + 1][0][j] += dp[i][0][j];
-                        } else if 0 < d[i] {
-                            dp[i + 1][1][j] += dp[i][0][j];
-                        }
-                        dp[i + 1][1][j] += dp[i][1][j];
-                    } else {
-                        if x == d[i] {
-                            dp[i + 1][0][j] += dp[i][0][j - 1];
-                        } else if x < d[i] {
-                            dp[i + 1][1][j] += dp[i][0][j - 1];
-                        }
-                        dp[i + 1][1][j] += dp[i][1][j - 1];
+        for j in 0..4 {
+            for k in 0..2 {
+                let digit = d[i];
+                for x in 0..10 {
+                    let next_i = i + 1;
+                    let mut next_j = j;
+                    let mut next_k = k;
+                    if x != 0 {
+                        next_j += 1;
                     }
+                    if next_j > K {
+                        continue;
+                    }
+                    if k == 0 {
+                        if x < digit {
+                            next_k = 1;
+                        } else if x > digit {
+                            continue;
+                        }
+                    }
+                    dp[next_i][next_j][next_k] += dp[i][j][k];
                 }
             }
         }
     }
+    println!("{}", dp[d_len][K][0] + dp[d_len][K][1]);
 
-    println!("{}", dp[d_len][0][K] + dp[d_len][1][K]);
+    // for i in 1..=d_len {
+    //     for small in 0..2 {
+    //         for j in 0..=K {
+    //             for x in 0..=(if small == 1 { 9 } else { d[i - 1] }) {
+    //                 dbg!((i, small, j, x));
+    //                 if x == 0 {
+    //                     if 0 == d[i - 1] {
+    //                         dp[i][0][j] += dp[i - 1][0][j];
+    //                     } else if 0 < d[i - 1] {
+    //                         dp[i][1][j] += dp[i - 1][0][j];
+    //                     }
+    //                     dp[i][1][j] += dp[i - 1][1][j];
+    //                 } else if j > 0 {
+    //                     if x == d[i - 1] {
+    //                         dp[i][0][j] += dp[i - 1][0][j - 1];
+    //                     } else if x < d[i - 1] {
+    //                         dp[i][1][j] += dp[i - 1][0][j - 1];
+    //                     }
+    //                     dp[i][1][j] += dp[i - 1][1][j - 1];
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    // println!("{}", dp[d_len][0][K] + dp[d_len][1][K]);
 }
 
 // fn main() {
