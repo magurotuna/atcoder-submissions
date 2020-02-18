@@ -1,5 +1,8 @@
 use libprocon::*;
 
 fn main() {
-    unimplemented!();
+    input! {
+        r: usize,
+    }
+    println!("{}", r.pow(2u32));
 }
