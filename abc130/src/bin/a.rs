@@ -1,5 +1,9 @@
 use libprocon::*;
 
 fn main() {
-    unimplemented!();
+    input! {
+        x: usize,
+        a: usize,
+    }
+    println!("{}", if x < a { 0 } else { 10 });
 }
