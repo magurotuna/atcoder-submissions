@@ -1,5 +1,9 @@
 use libprocon::*;
 
 fn main() {
-    unimplemented!();
+    input! {
+        k: i64,
+        x: i64,
+    }
+    println!("{}", if 500 * k >= x { "Yes" } else { "No" });
 }

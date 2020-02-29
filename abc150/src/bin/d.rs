@@ -30,13 +30,40 @@ fn count_two(n: i64) -> i64 {
     cnt
 }
 
-pub fn gcd(a: i64, b: i64) -> i64 {
-    if b == 0 {
+pub fn gcd<T>(a: T, b: T) -> T
+where
+    T: Int,
+{
+    if b == T::zero() {
         a
     } else {
         gcd(b, a % b)
     }
 }
-pub fn lcm(a: i64, b: i64) -> i64 {
+pub trait Int:
+    std::ops::Add<Output = Self>
+    + std::ops::Sub<Output = Self>
+    + std::ops::Mul<Output = Self>
+    + std::ops::Div<Output = Self>
+    + std::ops::Rem<Output = Self>
+    + std::hash::Hash
+    + PartialEq
+    + Eq
+    + PartialOrd
+    + Ord
+    + Copy
+{
+    fn zero() -> Self;
+    fn one() -> Self;
+    fn next(self) -> Self;
+    fn prev(self) -> Self;
+    fn sqrt_floor(self) -> Self;
+}
+macro_rules ! impl_int_for_numerics { ( $ ( $ t : ty ) * ) => ( $ ( impl Int for $ t { fn zero ( ) -> Self { 0 } fn one ( ) -> Self { 1 } fn next ( self ) -> Self { self + Self :: one ( ) } fn prev ( self ) -> Self { self - Self :: one ( ) } fn sqrt_floor ( self ) -> Self { if self < Self :: zero ( ) { return Self :: zero ( ) ; } let two = Self :: one ( ) . next ( ) ; let mut ok = Self :: zero ( ) ; let mut ng = self . next ( ) ; while ng - ok > 1 { let mid = ( ng + ok ) / two ; if mid * mid <= self { ok = mid ; } else { ng = mid ; } } ok } } ) * ) }
+impl_int_for_numerics ! ( u8 i8 u16 i16 u32 i32 u64 i64 usize isize ) ;
+pub fn lcm<T>(a: T, b: T) -> T
+where
+    T: Int,
+{
     a / gcd(a, b) * b
 }
