@@ -55,5 +55,11 @@ macro_rules! read_value {
 }
 
 fn main() {
-    unimplemented!();
+    input! {
+        N: usize,
+        L: [i64; N],
+    }
+    let &max = L.iter().max().unwrap();
+    let sum_except_max = L.iter().sum::<i64>() - max;
+    println!("{}", if sum_except_max > max { "Yes" } else { "No" });
 }
