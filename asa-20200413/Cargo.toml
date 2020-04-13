@@ -1,0 +1,8 @@
+[package]
+name = "asa-20200413"
+version = "0.1.0"
+authors = ["Yusuke Tanaka <yusuktan@maguro.dev>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
