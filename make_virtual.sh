@@ -7,73 +7,69 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-mkdir $1
+cargo init $1
 cd $1
-cargo init
 git init
 mkdir src/bin
+
+cat <<'EOF' >> Cargo.toml
+libprocon = { git = "https://github.com/magurotuna/libprocon.git" }
+num = "0.2.1"
+num-bigint = "0.2.6"
+num-complex = "0.2.4"
+num-integer = "0.1.42"
+num-iter = "0.1.40"
+num-rational = "0.2.4"
+num-traits = "0.2.11"
+num-derive = "0.3.0"
+ndarray = "0.13.0"
+nalgebra = "0.20.0"
+alga = "0.9.3"
+libm = "0.2.1"
+rand = { version = "0.7.3", features = ["small_rng"] }
+getrandom = "0.1.14"
+rand_chacha = "0.2.2"
+rand_core = "0.5.1"
+rand_hc = "0.2.0"
+rand_pcg = "0.2.1"
+rand_distr = "0.2.2"
+petgraph = "0.5.0"
+indexmap = "1.3.2"
+regex = "1.3.6"
+lazy_static = "1.4.0"
+ordered-float = "1.0.2"
+ascii = "1.0.0"
+permutohedron = "0.2.4"
+superslice = "1.0.0"
+itertools = "0.9.0"
+itertools-num = "0.1.3"
+maplit = "1.0.2"
+either = "1.5.3"
+im-rc = "14.3.0"
+fixedbitset = "0.2.0"
+bitset-fixed = "0.1.0"
+proconio = { version = "0.3.6", features = ["derive"] }
+text_io = "0.1.8"
+whiteread = "0.5.0"
+rustc-hash = "1.1.0"
+smallvec = "1.2.0"
+EOF
 
 for f in a.rs b.rs c.rs d.rs e.rs f.rs
 do
   cat <<'EOF' > src/bin/$f
-#![allow(unused_macros)]
+#![allow(unused_imports)]
 
-// cf. [Rustで競技プログラミングの入力をスッキリ記述するマクロ - Qiita](https://qiita.com/tanakh/items/0ba42c7ca36cd29d0ac8)
-macro_rules! input {
-    (source = $s:expr, $($r:tt)*) => {
-        let mut iter = $s.split_whitespace();
-        let mut next = || { iter.next().unwrap() };
-        input_inner!{next, $($r)*}
-    };
-    ($($r:tt)*) => {
-        let stdin = std::io::stdin();
-        let mut bytes = std::io::Read::bytes(std::io::BufReader::new(stdin.lock()));
-        let mut next = move || -> String{
-            bytes
-                .by_ref()
-                .map(|r|r.unwrap() as char)
-                .skip_while(|c|c.is_whitespace())
-                .take_while(|c|!c.is_whitespace())
-                .collect()
-        };
-        input_inner!{next, $($r)*}
-    };
-}
+use proconio::fastout;
+use proconio::input;
+use proconio::marker::{Bytes, Chars, Usize1};
 
-macro_rules! input_inner {
-    ($next:expr) => {};
-    ($next:expr, ) => {};
-
-    ($next:expr, $var:ident : $t:tt $($r:tt)*) => {
-        let $var = read_value!($next, $t);
-        input_inner!{$next $($r)*}
-    };
-}
-
-macro_rules! read_value {
-    ($next:expr, ( $($t:tt),* )) => {
-        ( $(read_value!($next, $t)),* )
-    };
-
-    ($next:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
-    };
-
-    ($next:expr, chars) => {
-        read_value!($next, String).chars().collect::<Vec<char>>()
-    };
-
-    ($next:expr, usize1) => {
-        read_value!($next, usize) - 1
-    };
-
-    ($next:expr, $t:ty) => {
-        $next().parse::<$t>().expect("Parse error")
-    };
-}
-
+#[fastout]
 fn main() {
-    unimplemented!();
+    input! {
+        r: f64,
+    }
+    println!("{}", 2.0 * r * std::f64::consts::PI);
 }
 EOF
 done
