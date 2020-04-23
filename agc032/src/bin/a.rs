@@ -3,19 +3,19 @@
 use proconio::fastout;
 use proconio::input;
 use proconio::marker::{Bytes, Chars, Usize1};
+use std::collections::VecDeque;
 
 #[fastout]
 fn main() {
     input! {
-        N: usize,
-        mut b: [i64; N],
+        n: usize,
+        mut b: [i64; n],
     }
-    use std::collections::VecDeque;
     let mut v = VecDeque::new();
-    for i in 0..N {
-        let mut max_idx = N + 1;
+    for _ in 0..n {
+        let mut max_idx = n + 1;
         let mut cnt = 1;
-        for j in 0..N {
+        for j in 0..n {
             if b[j] == -1 {
                 continue;
             }
@@ -24,7 +24,7 @@ fn main() {
             }
             cnt += 1;
         }
-        if max_idx == N + 1 {
+        if max_idx == n + 1 {
             println!("-1");
             return;
         }
