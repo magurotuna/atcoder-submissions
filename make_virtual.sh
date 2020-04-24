@@ -73,3 +73,5 @@ fn main() {
 }
 EOF
 done
+
+cargo check
