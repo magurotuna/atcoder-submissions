@@ -7,9 +7,8 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-cargo init $1
+cargo new $1 --vcs git
 cd $1
-git init
 
 # FIXME: change this to "1.42.0" after the judge update is applied to old contests
 echo "1.15.1" > rust-toolchain
@@ -97,4 +96,7 @@ fn solve() {
 EOF
 done
 
-cargo check
+# FIXME: Uncomment the next line after updating rust version, because v1.15.1 doesn't have `clean` command.
+# cargo check
+
+echo "Finished!"
