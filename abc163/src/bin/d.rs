@@ -7,7 +7,130 @@ use proconio::marker::{Bytes, Chars, Usize1};
 #[fastout]
 fn main() {
     input! {
-        n: Usize1,
+        n: usize,
+        k: usize,
     }
-    println!("{}", n);
+    let mut ans = 0.mint();
+    for i in k..=(n + 1) {
+        let upper = i * (2 * n - i + 1) / 2;
+        let lower = i * (i - 1) / 2;
+        ans += upper - lower + 1;
+    }
+    println!("{}", ans);
 }
+
+/// 累乗のmod
+/// cf. https://github.com/hatoo/competitive-rust-snippets/blob/master/src/modulo.rs
+pub fn mod_pow(x: i64, n: i64, m: i64) -> i64 {
+    let mut res = 1;
+    let mut x = x % m;
+    let mut n = n;
+    while n > 0 {
+        if n & 1 == 1 {
+            res = (res * x) % m;
+        }
+        x = (x * x) % m;
+        n >>= 1;
+    }
+    res
+}
+/// mod m での a の逆元を求める
+/// m と a が互いに素でなければならないことに注意
+/// cf. [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜 - Qiita](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
+pub fn mod_inv(val: i64, modulo: i64) -> i64 {
+    use std::mem::swap;
+    let mut a = val;
+    let mut b = modulo;
+    let mut ret = 1;
+    let mut v = 0;
+    while b > 0 {
+        let t = a / b;
+        a -= t * b;
+        swap(&mut a, &mut b);
+        ret -= t * v;
+        swap(&mut ret, &mut v);
+    }
+    ret %= modulo;
+    if ret < 0 {
+        ret += modulo;
+    }
+    ret
+}
+pub trait IntoModInt {
+    /// Create a ModInt instance with modulo 1_000_000_007 (= 10^9 + 7).
+    fn mint(&self) -> ModInt;
+    /// Create a ModInt instance with any modulo.
+    fn mint_with_mod(&self, modulo: Self) -> ModInt;
+}
+#[derive(Clone, Copy)]
+pub struct ModInt {
+    value: i64,
+    modulo: i64,
+}
+impl ModInt {
+    pub fn new(value: i64, modulo: i64) -> Self {
+        let r = value % modulo;
+        Self {
+            value: if r < 0 { r + modulo } else { r },
+            modulo,
+        }
+    }
+}
+impl std::fmt::Debug for ModInt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
+    }
+}
+impl std::fmt::Display for ModInt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
+    }
+}
+impl std::ops::Add for ModInt {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self::new(self.value + other.value, self.modulo)
+    }
+}
+impl std::ops::Sub for ModInt {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self {
+        Self::new(self.value - other.value, self.modulo)
+    }
+}
+impl std::ops::Mul for ModInt {
+    type Output = Self;
+    fn mul(self, other: Self) -> Self {
+        Self::new(self.value * other.value, self.modulo)
+    }
+}
+impl std::ops::Div for ModInt {
+    type Output = Self;
+    fn div(self, other: Self) -> Self {
+        let inv = mod_inv(other.value, self.modulo);
+        Self::new(self.value * inv, self.modulo)
+    }
+}
+impl std::ops::AddAssign for ModInt {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self::new(self.value + other.value, self.modulo);
+    }
+}
+impl std::ops::SubAssign for ModInt {
+    fn sub_assign(&mut self, other: Self) {
+        *self = Self::new(self.value - other.value, self.modulo);
+    }
+}
+impl std::ops::MulAssign for ModInt {
+    fn mul_assign(&mut self, other: Self) {
+        *self = Self::new(self.value * other.value, self.modulo);
+    }
+}
+impl std::ops::DivAssign for ModInt {
+    fn div_assign(&mut self, other: Self) {
+        let inv = mod_inv(other.value, self.modulo);
+        *self = Self::new(self.value * inv, self.modulo);
+    }
+}
+macro_rules !impl_mod_int {($($t :ty ) *) =>($(impl IntoModInt for $t {fn mint (&self ) ->ModInt {ModInt ::new (*self as i64 ,1_000_000_007 ) } fn mint_with_mod (&self ,modulo :$t ) ->ModInt {ModInt ::new (*self as i64 ,modulo as i64 ) } } impl std ::cmp ::PartialEq <$t >for ModInt {fn eq (&self ,other :&$t ) ->bool {self .value ==(*other as i64 ) } } impl std ::ops ::Add <$t >for ModInt {type Output =Self ;fn add (self ,other :$t ) ->Self {Self ::new (self .value +(other as i64 ) ,self .modulo ) } } impl std ::ops ::AddAssign <$t >for ModInt {fn add_assign (&mut self ,other :$t ) {*self =Self ::new (self .value +(other as i64 ) ,self .modulo ) ;} } impl std ::ops ::Sub <$t >for ModInt {type Output =Self ;fn sub (self ,other :$t ) ->Self {Self ::new (self .value -(other as i64 ) ,self .modulo ) } } impl std ::ops ::SubAssign <$t >for ModInt {fn sub_assign (&mut self ,other :$t ) {*self =Self ::new (self .value -(other as i64 ) ,self .modulo ) ;} } impl std ::ops ::Mul <$t >for ModInt {type Output =Self ;fn mul (self ,other :$t ) ->Self {Self ::new (self .value *(other as i64 ) ,self .modulo ) } } impl std ::ops ::MulAssign <$t >for ModInt {fn mul_assign (&mut self ,other :$t ) {*self =Self ::new (self .value *(other as i64 ) ,self .modulo ) ;} } impl std ::ops ::Div <$t >for ModInt {type Output =Self ;fn div (self ,other :$t ) ->Self {let inv =mod_inv (other as i64 ,self .modulo ) ;Self ::new (self .value *inv ,self .modulo ) } } impl std ::ops ::DivAssign <$t >for ModInt {fn div_assign (&mut self ,other :$t ) {let inv =mod_inv (other as i64 ,self .modulo ) ;*self =Self ::new (self .value *inv ,self .modulo ) ;} } ) *) }
+impl_mod_int !(u8 i8 u16 i16 u32 i32 u64 i64 usize isize );
