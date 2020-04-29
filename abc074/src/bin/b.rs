@@ -22,10 +22,11 @@
 //! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //! SOFTWARE.
 #![allow(unused_imports, unused_macros, dead_code)]
-use std::cmp::{max, min, Ordering};
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque};
-use std::io::{stdin, stdout, BufWriter, Write};
-use std::iter::FromIterator;
+use std::{
+    cmp::min,
+    io::{stdin, stdout, BufWriter, Write},
+};
 mod util {
     use std::fmt::Debug;
     use std::io::{stdin, stdout, BufWriter, StdoutLock};
@@ -82,3 +83,4 @@ fn solve() {
     }
     println!("{}", ans);
 }
+
