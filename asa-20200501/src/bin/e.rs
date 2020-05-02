@@ -21,7 +21,13 @@
 //! LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //! SOFTWARE.
-#![allow(unused_imports, unused_attributes, unused_macros, dead_code)]
+#![allow(
+    unused_imports,
+    unused_attributes,
+    unused_macros,
+    dead_code,
+    non_snake_case
+)]
 use std::cmp::{max, min, Ordering};
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque};
 use std::io::{stdin, stdout, BufWriter, Write};
@@ -46,5 +52,76 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let (H, W, K) = get!((usize, usize, usize));
+    let s = get!([chars; H]);
+    let mut ans: usize = 1 << 60;
+    for h in 0..(1 << (H - 1)) {
+        let mut cut = 0;
+        let mut g_cnt = BTreeMap::new();
+        for i in 0..(H - 1) {
+            if (1 << i) & h != 0 {
+                g_cnt.insert(i + 1, 0);
+                cut += 1;
+            }
+        }
+        g_cnt.insert(H, 0);
+        for w in 0..W {
+            match col_count_ok(&mut g_cnt, w, K, &s) {
+                Cut::Impossible => cut += 10000000,
+                Cut::NotNecessary => (),
+                Cut::Necessary => cut += 1,
+            }
+        }
+        ans = min(ans, cut);
+    }
+    echo!(ans);
+}
+
+fn col_count_ok(
+    group_cnt: &mut BTreeMap<usize, usize>,
+    col: usize,
+    max_white: usize,
+    choco: &Vec<Vec<char>>,
+) -> Cut {
+    let mut prev = 0;
+    let mut ok = true;
+    let mut col_cnt = Vec::new();
+    for (row, cnt) in group_cnt.iter() {
+        let mut cur_cnt = 0;
+        for i in prev..*row {
+            if choco[i][col] == '1' {
+                cur_cnt += 1;
+            }
+        }
+        col_cnt.push(cur_cnt);
+        if cnt + cur_cnt > max_white {
+            ok = false;
+        }
+        prev = *row;
+    }
+    let mut idx = 0;
+    for cnt in group_cnt.values_mut() {
+        if ok {
+            *cnt += col_cnt[idx];
+        } else {
+            if col_cnt[idx] > max_white {
+                return Cut::Impossible;
+            }
+            *cnt = col_cnt[idx];
+        }
+        idx += 1;
+    }
+
+    if ok {
+        Cut::NotNecessary
+    } else {
+        Cut::Necessary
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Cut {
+    Impossible,
+    Necessary,
+    NotNecessary,
 }
