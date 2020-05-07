@@ -60,17 +60,9 @@ fn main() {
     }
 }
 fn solve() {
-    let w = get!(chars);
-    let mut m = BTreeMap::new();
-    for c in w {
-        *m.entry(c).or_insert(0) += 1;
-    }
-
-    for (_, n) in m {
-        if n % 2 != 0 {
-            echo!("No");
-            return;
-        }
-    }
-    echo!("Yes");
+    let n = get!(usize);
+    let k = get!(usize);
+    let x = get!(usize);
+    let y = get!(usize);
+    echo!(if n <= k { x * n } else { x * k + y * (n - k) });
 }
