@@ -60,5 +60,10 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let (a, b) = get!((i32, i32));
+    if a <= 8 && b <= 8 {
+        echo!("Yay!");
+    } else {
+        echo!(":(");
+    }
 }
