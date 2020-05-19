@@ -1,0 +1,11 @@
+[package]
+name = "abc021"
+version = "0.1.0"
+authors = ["Yusuke Tanaka <yusuktan@maguro.dev>"]
+edition = "2018"
+
+[dependencies]
+
+[profile.release]
+lto = true
+panic = 'abort'
