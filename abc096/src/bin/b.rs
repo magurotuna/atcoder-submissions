@@ -60,5 +60,8 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let mut a = get!([i64]);
+    let k = get!(i64);
+    a.sort();
+    echo!(a[0] + a[1] + a[2] * 2i64.pow(k as u32));
 }
