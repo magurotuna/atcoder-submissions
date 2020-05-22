@@ -60,5 +60,6 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let (a, b) = get!((i64, i64));
+    echo!((a - 1) + if b >= a { 1 } else { 0 });
 }
