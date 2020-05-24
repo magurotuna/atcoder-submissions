@@ -44,7 +44,7 @@ macro_rules !chmax {($base :expr ,$($cmps :expr ) ,+$(,) *) =>{{let cmp_max =max
 macro_rules !min {($a :expr $(,) *) =>{{$a } } ;($a :expr ,$b :expr $(,) *) =>{{std ::cmp ::min ($a ,$b ) } } ;($a :expr ,$($rest :expr ) ,+$(,) *) =>{{std ::cmp ::min ($a ,min !($($rest ) ,+) ) } } ;}
 #[macro_export]
 macro_rules !max {($a :expr $(,) *) =>{{$a } } ;($a :expr ,$b :expr $(,) *) =>{{std ::cmp ::max ($a ,$b ) } } ;($a :expr ,$($rest :expr ) ,+$(,) *) =>{{std ::cmp ::max ($a ,max !($($rest ) ,+) ) } } ;}
-const BIG_STACK_SIZE: bool = true;
+const BIG_STACK_SIZE: bool = false;
 fn main() {
     use std::thread;
     if BIG_STACK_SIZE {
@@ -56,9 +56,10 @@ fn main() {
             .join()
             .unwrap();
     } else {
-        solve2();
+        solve();
     }
 }
+
 fn solve() {
     let N = get!(usize);
     let P = get!([usize1]);
@@ -70,51 +71,15 @@ fn solve() {
     }
     let mut exists = vec![vec![true; N]; N];
     let mut ans = 0;
+    let mut q = VecDeque::with_capacity(N * N);
     for p in P {
         let (i, j) = pos(p, N);
         let c = seats[i][j];
         ans += c;
         exists[i][j] = false;
-        let mut stack = vec![(i, j, c)];
-        stack.push((i, j, c));
-        while let Some((i, j, c)) = stack.pop() {
-            seats[i][j] = c;
-            let nc = if exists[i][j] { c + 1 } else { c };
-            for &(dx, dy) in [(-1, 0), (1, 0), (0, -1), (0, 1)].iter() {
-                let ni = i as i64 + dx;
-                let nj = j as i64 + dy;
-                if ni < 0 || N as i64 <= ni || nj < 0 || N as i64 <= nj {
-                    continue;
-                }
-                if nc < seats[ni as usize][nj as usize] {
-                    stack.push((ni as usize, nj as usize, nc));
-                }
-            }
-        }
-    }
-
-    echo!(ans);
-}
-fn solve2() {
-    let N = get!(usize);
-    let P = get!([usize1]);
-    let mut seats = vec![vec![0usize; N]; N];
-    for i in 0..N {
-        for j in 0..N {
-            seats[i][j] = min!(i, j, N - 1 - i, N - 1 - j);
-        }
-    }
-    let mut exists = vec![vec![true; N]; N];
-    let mut ans = 0;
-    for p in P {
-        let (i, j) = pos(p, N);
-        let c = seats[i][j];
-        ans += c;
-        exists[i][j] = false;
-        let mut q = VecDeque::new();
         q.push_back((i, j, c));
         while let Some((i, j, c)) = q.pop_front() {
-            seats[i][j] = c;
+            debug!(q.len());
             let nc = if exists[i][j] { c + 1 } else { c };
             for &(dx, dy) in [(-1, 0), (1, 0), (0, -1), (0, 1)].iter() {
                 let ni = i as i64 + dx;
@@ -123,6 +88,7 @@ fn solve2() {
                     continue;
                 }
                 if nc < seats[ni as usize][nj as usize] {
+                    seats[ni as usize][nj as usize] = nc;
                     q.push_back((ni as usize, nj as usize, nc));
                 }
             }
