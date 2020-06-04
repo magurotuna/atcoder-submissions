@@ -60,5 +60,10 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let (a, b) = get!((i32, i32));
+    if b % a == 0 {
+        echo!(a + b);
+    } else {
+        echo!(b - a);
+    }
 }
