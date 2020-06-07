@@ -60,5 +60,46 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let Q = get!(usize);
+    let mut s_queue = VecDeque::with_capacity(Q);
+    for _ in 0..Q {
+        let input = get!(chars).into_iter().collect::<String>();
+        let query: Vec<_> = input.split_whitespace().collect();
+        if query[0] == "1" {
+            // add
+            let c = query[1].chars().next().unwrap();
+            let x = query[2].parse::<usize>().unwrap();
+            match s_queue.back() {
+                Some(&(bc, _)) if bc == c => {
+                    s_queue.back_mut().map(|(_, ref mut cnt)| *cnt += x);
+                }
+                _ => s_queue.push_back((c, x)),
+            }
+        } else {
+            // remove
+            let mut d = query[1].parse::<usize>().unwrap();
+            let mut alpha_counts = vec![0; 26];
+            while d > 0 {
+                if let Some((c, x)) = s_queue.pop_front() {
+                    let idx = alpha2idx(c);
+                    if x <= d {
+                        d -= x;
+                        alpha_counts[idx] += x;
+                    } else {
+                        alpha_counts[idx] += d;
+                        let rest_x = x - d;
+                        d = 0;
+                        s_queue.push_front((c, rest_x));
+                    }
+                } else {
+                    break;
+                }
+            }
+            echo!(alpha_counts.into_iter().map(|x| x * x).sum::<usize>());
+        }
+    }
+}
+
+fn alpha2idx(alpha: char) -> usize {
+    (alpha as u8 - 'a' as u8) as usize
 }
