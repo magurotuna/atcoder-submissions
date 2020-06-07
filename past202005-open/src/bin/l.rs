@@ -60,5 +60,64 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(usize);
+    let mut ts = Vec::with_capacity(N);
+    for _ in 0..N {
+        let mut kt = get!([usize]).into_iter().skip(1).collect::<Vec<_>>();
+        kt.reverse();
+        ts.push(kt);
+    }
+    let M = get!(usize);
+    let As = get!([usize]);
+    let mut map1 = BTreeSet::new();
+    let mut map2 = BTreeSet::new();
+    for i in 0..N {
+        if let Some(first) = ts[i].pop() {
+            map1.insert((first, i, 1));
+            map2.insert((first, i, 1));
+        }
+        if let Some(&second) = ts[i].last() {
+            map2.insert((second, i, 2));
+        }
+    }
+
+    for a in As {
+        if a == 1 {
+            let &(value, row, col) = map1.iter().next_back().unwrap();
+            echo!(value);
+            map1.remove(&(value, row, col));
+            map2.remove(&(value, row, col));
+            if let Some(x) = ts[row].pop() {
+                map1.insert((x, row, 1));
+
+                // move value to the first column
+                map2.remove(&(x, row, 2));
+                map2.insert((x, row, 1));
+
+                if let Some(&y) = ts[row].last() {
+                    map2.insert((y, row, 2));
+                }
+            }
+        } else {
+            let &(value, row, col) = map2.iter().next_back().unwrap();
+            echo!(value);
+            map2.remove(&(value, row, col));
+            if col == 1 {
+                map1.remove(&(value, row, col));
+                if let Some(x) = ts[row].pop() {
+                    map1.insert((x, row, 1));
+                    map2.remove(&(x, row, 2));
+                    map2.insert((x, row, 1));
+                    if let Some(&y) = ts[row].last() {
+                        map2.insert((y, row, 2));
+                    }
+                }
+            } else {
+                ts[row].pop();
+                if let Some(&y) = ts[row].last() {
+                    map2.insert((y, row, 2));
+                }
+            }
+        }
+    }
 }

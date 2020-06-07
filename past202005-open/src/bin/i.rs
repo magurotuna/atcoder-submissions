@@ -60,5 +60,55 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(usize);
+    let Q = get!(usize);
+    let mut transpose = false;
+    let calc = |i, j| N * i + j;
+    let mut row_nums: Vec<_> = (0..N).collect();
+    let mut col_nums: Vec<_> = (0..N).collect();
+    for _ in 0..Q {
+        let input: String = get!(chars).into_iter().collect();
+        let query: Vec<_> = input
+            .split_whitespace()
+            .map(|x| x.parse::<usize>().unwrap())
+            .collect();
+        match query[0] {
+            1 => {
+                let a = query[1] - 1;
+                let b = query[2] - 1;
+                if transpose {
+                    // exchange column
+                    col_nums.swap(a, b);
+                } else {
+                    // exchange row
+                    row_nums.swap(a, b);
+                }
+            }
+            2 => {
+                let a = query[1] - 1;
+                let b = query[2] - 1;
+                if transpose {
+                    // exchange row
+                    row_nums.swap(a, b);
+                } else {
+                    // exchange column
+                    col_nums.swap(a, b);
+                }
+            }
+            3 => {
+                transpose = !transpose;
+            }
+            4 => {
+                let a = query[1] - 1;
+                let b = query[2] - 1;
+                let (i, j) = if transpose {
+                    (row_nums[b], col_nums[a])
+                } else {
+                    (row_nums[a], col_nums[b])
+                };
+                echo!(calc(i, j));
+            }
+            _ => unreachable!(),
+        }
+    }
 }
