@@ -60,5 +60,45 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let S = get!(chars);
+    let mut set = BTreeSet::new();
+    for &c in &S {
+        set.insert(format!("{}", c));
+        set.insert(".".to_string());
+    }
+    for cs in S.windows(2) {
+        set.insert("..".to_string());
+        let s: Vec<char> = cs.iter().copied().collect();
+        set.insert(s.iter().collect());
+        for i in 0..2 {
+            let mut s_clone = s.clone();
+            s_clone[i] = '.';
+            set.insert(s_clone.iter().collect());
+        }
+    }
+
+    for cs in S.windows(3) {
+        set.insert("...".to_string());
+        let s: Vec<char> = cs.iter().copied().collect();
+        set.insert(s.iter().collect());
+        for i in 0..3 {
+            let mut s_clone = s.clone();
+            s_clone[i] = '.';
+            set.insert(s_clone.iter().collect());
+        }
+        let mut s_clone = s.clone();
+        s_clone[0] = '.';
+        s_clone[1] = '.';
+        set.insert(s_clone.iter().collect());
+        let mut s_clone = s.clone();
+        s_clone[1] = '.';
+        s_clone[2] = '.';
+        set.insert(s_clone.iter().collect());
+        let mut s_clone = s.clone();
+        s_clone[0] = '.';
+        s_clone[2] = '.';
+        set.insert(s_clone.iter().collect());
+    }
+    debug!(set);
+    echo!(set.len());
 }

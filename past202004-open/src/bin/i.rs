@@ -60,5 +60,38 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(usize);
+    let As = get!([usize]);
+    let As: Vec<_> = As.into_iter().enumerate().collect();
+    let mut last_rounds = vec![0; 1 << N];
+    rec(&As, 1, &mut last_rounds);
+    echo!(last_rounds
+        .into_iter()
+        .map(|x| x.to_string())
+        .collect::<Vec<_>>()
+        .join("\n"));
+}
+
+fn rec(people: &[(usize, usize)], round: usize, last_rounds: &mut Vec<usize>) {
+    if people.len() == 2 {
+        for &(idx, _) in people {
+            last_rounds[idx] = round;
+        }
+        return;
+    }
+
+    let mut winners = Vec::new();
+    for chunk in people.chunks(2) {
+        let (idx1, s1) = chunk[0];
+        let (idx2, s2) = chunk[1];
+        if s1 > s2 {
+            winners.push((idx1, s1));
+            last_rounds[idx2] = round;
+        } else {
+            winners.push((idx2, s2));
+            last_rounds[idx1] = round;
+        }
+    }
+
+    rec(&winners, round + 1, last_rounds);
 }

@@ -60,5 +60,19 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(usize);
+    let mut S = get!([chars; N]);
+    debug!(S);
+    for i in (0..N - 1).rev() {
+        for j in 1..(2 * N - 2) {
+            if S[i][j] == '#'
+                && (S[i + 1][j - 1] == 'X' || S[i + 1][j] == 'X' || S[i + 1][j + 1] == 'X')
+            {
+                S[i][j] = 'X';
+            }
+        }
+    }
+    for s in &S {
+        echo!(s.iter().collect::<String>());
+    }
 }

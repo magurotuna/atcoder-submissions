@@ -60,5 +60,17 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(usize);
+    let As = get!([usize]);
+    let mut ans = Vec::new();
+    for i in 0..N {
+        let mut j = 1;
+        let mut x = As[i] - 1;
+        while x != i {
+            x = As[x] - 1;
+            j += 1;
+        }
+        ans.push(j.to_string());
+    }
+    echo!(ans.join(" "));
 }
