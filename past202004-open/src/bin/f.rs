@@ -60,5 +60,19 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(usize);
+    let AB = get!([(usize1, usize); N]);
+    let mut bh = BinaryHeap::new();
+    let mut task_by_day = vec![vec![]; N];
+    for (a, b) in AB {
+        task_by_day[a].push(b);
+    }
+    let mut s = 0;
+    for i in 0..N {
+        for &p in &task_by_day[i] {
+            bh.push(p);
+        }
+        s += bh.pop().unwrap();
+        echo!(s);
+    }
 }
