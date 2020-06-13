@@ -60,5 +60,13 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let s = get!(String);
+    let t = get!(String);
+    if s == t {
+        echo!("same");
+    } else if s.to_lowercase() == t.to_lowercase() {
+        echo!("case-insensitive");
+    } else {
+        echo!("different");
+    }
 }
