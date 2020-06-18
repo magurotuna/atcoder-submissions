@@ -60,5 +60,6 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(i32);
+    echo!(N / 3);
 }
