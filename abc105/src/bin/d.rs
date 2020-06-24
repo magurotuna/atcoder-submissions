@@ -60,5 +60,29 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let (n, m) = get!((usize, usize));
+    let As = get!([usize]);
+
+    let mut cumsum = vec![0];
+    for i in 0..n {
+        let last = *cumsum.last().unwrap();
+        cumsum.push(last + As[i]);
+    }
+
+    let mut count_mod = HashMap::new();
+    for &b in &cumsum {
+        let bm = b % m;
+        *count_mod.entry(bm).or_insert(0usize) += 1;
+    }
+
+    let mut ans = 0;
+    for &b in &cumsum {
+        let bm = b % m;
+        let cnt = *count_mod.get(&bm).unwrap();
+        ans += cnt - 1;
+        if cnt > 0 {
+            count_mod.get_mut(&bm).map(|v| *v -= 1);
+        }
+    }
+    echo!(ans);
 }
