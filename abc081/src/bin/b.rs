@@ -60,5 +60,17 @@ fn main() {
     }
 }
 fn solve() {
-    todo!();
+    let N = get!(usize);
+    let As = get!([i64]);
+    let mut ans = 10000000usize;
+    for a in As {
+        let mut cnt = 0;
+        let mut a = a;
+        while a % 2 == 0 {
+            a /= 2;
+            cnt += 1;
+        }
+        chmin!(ans, cnt);
+    }
+    echo!(ans);
 }
