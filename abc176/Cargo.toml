@@ -1,0 +1,14 @@
+[package]
+name = "abc176"
+version = "0.1.0"
+authors = ["Yusuke Tanaka <yusuktan@maguro.dev>"]
+edition = "2018"
+
+# dependencies added to new project
+[dependencies]
+proconio = "*"
+#libprocon = { git = "https://github.com/magurotuna/libprocon" }
+
+[profile.release]
+lto = true
+panic = 'abort'
